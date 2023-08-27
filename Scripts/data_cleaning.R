@@ -107,16 +107,14 @@ combined_data <- cln_tran_usda %>%
   left_join(cln_tran_cdc,
             by = c("State" = "LocationDesc")) %>%  
   filter(!is.na(Stratification1)) %>% 
-  mutate(fmart_100k = count_fmart / (Population_2020 / 100000))  
+  mutate(fmart_100k = count_fmart / (Population_2020 / 100000),
+         income_strat = relevel(as.factor(Stratification1), ref = "Less than $15,000"))  
 
 # Removing unused data sets 
 remove(raw_cdc, raw_usda, state_pop, cln_state_pop, cln_tran_cdc, cln_tran_usda, 
        cdc_cols_drop, columns_to_encode, usda_drop)
 
 
-# combined_data %>% 
-#   group_by(Stratification1) %>% 
-#   summarise(Correlation = cor(count_fmart, Data_Value, use="complete.obs"))
   
 
 
