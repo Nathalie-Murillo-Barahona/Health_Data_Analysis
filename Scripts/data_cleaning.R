@@ -80,13 +80,18 @@ cln_tran_cdc <- raw_cdc %>%
   # Selected only question 37 
   filter(QuestionID == "Q037",
          StratificationCategory1 == "Income",
-         YearStart == 2020,
-         YearEnd == 2020,
          !LocationAbbr %in% c("GU", "PR", "DC", "US"),
          Stratification1 != "Data not reported"
          ) %>%
   # Dropped unwanted columns
-  select(-cdc_cols_drop)
+  select(-cdc_cols_drop) %>% 
+  mutate(income_strat = relevel(as.factor(Stratification1), ref = "Less than $15,000"),
+         income_ordinal = case_when(income_strat == "Less than $15,000" ~ 1,
+                                    income_strat == "$15,000 - $24,999" ~ 2,
+                                    income_strat == "$25,000 - $34,999" ~ 3,
+                                    income_strat == "$35,000 - $49,999" ~ 4,
+                                    income_strat == "$50,000 - $74,999" ~ 5,
+                                    income_strat == "$75,000 or greater" ~ 6))
 
 
 
@@ -111,7 +116,7 @@ combined_data <- cln_tran_usda %>%
          income_strat = relevel(as.factor(Stratification1), ref = "Less than $15,000"))  
 
 # Removing unused data sets 
-remove(raw_cdc, raw_usda, state_pop, cln_state_pop, cln_tran_cdc, cln_tran_usda, 
+remove(raw_cdc, raw_usda, state_pop, cln_state_pop, cln_tran_usda, 
        cdc_cols_drop, columns_to_encode, usda_drop)
 
 
