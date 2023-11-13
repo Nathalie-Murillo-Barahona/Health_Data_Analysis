@@ -5,7 +5,9 @@
     
     output <- data.frame(ref_level = rep("", n_levels - 1),
                          comp_level = rep("", n_levels - 1),
-                         marginal_or = rep(0, n_levels - 1))
+                         marginal_or = rep(0, n_levels - 1),
+                         CI_lower = rep(0, n_levels - 1),
+                         CI_upper = rep(0, n_levels - 1))
     
     for(i in 1:(n_levels - 1)){
       
@@ -25,11 +27,19 @@
       
       coef <- as.numeric(model$coefficients[i + 1])
       
-      m_or <- 1 - exp(coef)
+      CI <- as.data.frame(confint(model))
+      
+      m_or <- exp(coef)
+      
+      CI_lower <- exp(CI$`2.5 %`[i + 1])
+      
+      CI_upper <- exp(CI$`97.5 %`[i + 1])
       
       output$ref_level[i] <- ref
       output$comp_level[i] <- comp
       output$marginal_or[i] <- m_or
+      output$CI_lower[i] <- CI_lower
+      output$CI_upper[i] <- CI_upper
     }
     return(output)
   }
