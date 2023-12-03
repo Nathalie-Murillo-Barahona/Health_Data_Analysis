@@ -22,3 +22,4 @@ combined_data %>%
   group_by(state) %>% 
   summarise(avg_obs = mean(Data_Value)) %>% View()
   plot_usmap(values ="avg_obs")
+  
