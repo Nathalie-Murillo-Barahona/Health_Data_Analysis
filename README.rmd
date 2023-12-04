@@ -30,3 +30,24 @@ In order to make use of the data some cleaning of the data had to be done. The f
 -   Created an numerical variable which corresponds to ordinal income level.
 
 ### Exploritory Data Analysis
+
+```{r}
+source(file = "./Scripts/data_cleaning.R")
+source(file = "./Scripts/helper_functions.R")
+
+marginal_effects <- 
+  marginal_ods_calc(y = cln_tran_cdc$Data_Value/100,
+                 x = cln_tran_cdc$income_strat,
+                 weight = cln_tran_cdc$Sample_Size,
+                 x_ord = cln_tran_cdc$income_ordinal)
+marginal_effects |> ggplot(aes(y =  marginal_or, 
+                               x = comp_level)) +
+  geom_point() +
+  geom_errorbar(aes(ymin=CI_lower, ymax=CI_upper), width=.2,
+                position=position_dodge(0.05)) +
+  labs(title = "Change in Odds Ratio",
+       y = "Marginal Odd Ratio",
+       x = "Income Level")
+
+```
+
