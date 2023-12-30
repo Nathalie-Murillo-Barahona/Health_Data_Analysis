@@ -6,7 +6,10 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+source(file = "./Scripts/data_cleaning.R")
+source(file = "./Scripts/helper_functions.R")
+source(file = "./Scripts/eda.R")
 ```
 
 ## Introduction
@@ -15,39 +18,50 @@ In recent decades, the escalating prevalence of obesity in the United States has
 
 ## Data
 
-The data for this analysis is sourced from the [CDC's Nutrition, Physical Activity](https://data.cdc.gov/Nutrition-Physical-Activity-and-Obesity/Nutrition-Physical-Activity-and-Obesity-Behavioral/hn4x-zwk7). The dimensions of the CDC's data is 88,600 rows and 33 columns. The data set consists of measures/questions of interest (example: *Percent of adult population with obesity*) aggregated across various dimensions of interest (examples: *state, socio-economic class, race, etc...*).
+The data for this analysis is sourced from the [CDC's Nutrition, Physical Activity](https://data.cdc.gov/Nutrition-Physical-Activity-and-Obesity/Nutrition-Physical-Activity-and-Obesity-Behavioral/hn4x-zwk7). The dimensions of the CDC's data is 88,600 rows and 33 columns. The data set consists of measures/questions of interest (example: *Percent of adult population with obesity*) aggregated across various dimensions of interest (examples: *year, state, socio-economic class, race, etc...*).
 
 ## Process
 
 ### Data Cleaning
 
-In order to make use of the data some cleaning of the data had to be done. The full code for the data cleaning can be found in [here](../Scripts/data_cleaning.R). In summary the steps were:
+In order to make use of the data some cleaning of the data had to be done. The full code for the data cleaning can be found in [here](./Scripts/data_cleaning.R). In summary the steps were:
 
 -   Removed unused columns from the data set.
 -   Filter the data set down to the question of interest (adult obesity).
--   Filter the data set down to the dimensions of interest (Income class and state).
+-   Filter the data set down to the dimensions of interest (Income class, state and year).
 -   Clean out any data points where the observation was missing or location was a US territory rather than a state.
 -   Created an numerical variable which corresponds to ordinal income level.
 
 ### Exploritory Data Analysis
 
-```{r}
-source(file = "./Scripts/data_cleaning.R")
-source(file = "./Scripts/helper_functions.R")
+Below is a table of the summary statistics for each state aggregated by income level. 
+```{r summary statistics}
+ 
+knitr::kable(summary_stats, 
+             col.names = c("Income Level", 
+                           "Min Obesity Rate",
+                           "Max Obesity Rate",
+                           "Avg Obesity Rate", 
+                           "Median Obesity Rate"),
+             caption = "Obesity rates by income level aggerated over state and year. "
+             )
+```
 
-marginal_effects <- 
-  marginal_ods_calc(y = cln_tran_cdc$Data_Value/100,
-                 x = cln_tran_cdc$income_strat,
-                 weight = cln_tran_cdc$Sample_Size,
-                 x_ord = cln_tran_cdc$income_ordinal)
-marginal_effects |> ggplot(aes(y =  marginal_or, 
-                               x = comp_level)) +
-  geom_point() +
-  geom_errorbar(aes(ymin=CI_lower, ymax=CI_upper), width=.2,
-                position=position_dodge(0.05)) +
-  labs(title = "Change in Odds Ratio",
-       y = "Marginal Odd Ratio",
-       x = "Income Level")
+As can be seen in the summary table, on average obesity rates among adults tends to increase with income level when obesity rates from different states and years are aggregated by income level. 
+
+ADD MORE HERE 
+
+### Hypothesis 
+
+The effect of income on increasing obesity weakens as income level rises. 
+
+To test this hypothesis we can analyze the marginal changes in odds ratio when income level increases by one level. 
+
+This can be accomplished by recursively fitting a logistic regression model with percent of adults who are obese as the response variable and income level as the independent variable. Income level is encoded as a binary variable for each level indicating if an observation belongs to that income level.  Each time the model is fit we increase the reference level of the income by one (starting with the base level of less than $15,000 annual household income) and extract the model coefficient related to the income level one greater than the reference level. This model coefficient is then used to the calculate the marginal odds ratio of increasing income by one level. High and low bounds for the 95 percent confidence interval for coefficient are also extracted in order to determine statistical significance of the marginal change in odds ratio. Below is a plot showing the results of this process. 95 percent confidence interval is shown using the error bars around the point estimates.
+```{r marginal change}
+marginal_effects_plot
 
 ```
 
+
+The plot shows the marginal odds ratio steadily decreasing as income level increases. The odds ratios drop for every increasing level of income except odds ratio appears to increase when looking at the increase from going 50K to 75K to the 75K+ income level. However, it should be noted that the confidence interval from the previous level overlaps indicating that the change in odds ratio is not statistically significant. All other changes in the odds ratios with increasing income show a significant decrease effect of income. This should not be interpreted as that increasing income level causes likelihood of obesity to decrease. Rather, that the power of income to increase obesity drops as income rise. 
