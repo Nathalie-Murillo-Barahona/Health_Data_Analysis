@@ -1,5 +1,16 @@
 
-  marginal_ods_calc <- function(y, x, weight, x_ord){
+####################################################
+# Script: helper_functions.r
+# Author: Nathalie Murillo-Barahona
+# Date: 2023/21/11
+#---------------------------------------------------
+# Change History:
+####################################################  
+
+
+# A function which calculates the marginal change in Odds ratio 
+# with the change in level of a independent ordinal variable 
+marginal_ods_calc <- function(y, x, weight, x_ord){
     
     n_levels <- max(x_ord)
     
@@ -42,6 +53,18 @@
       output$CI_upper[i] <- CI_upper
     }
     return(output)
-  }
+}
+
+# expand a data frame which is compressed by sample weight 
+expand_by_weight <- function(data, weight){
+  expanded_data <- data %>%
+    slice(rep(1:n(), each = data[[weight]])) %>%
+    arrange(desc(!!sym(weight)))
+  
+  return(expanded_data)
+  
+}
+
+
   
  
