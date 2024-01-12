@@ -12,7 +12,6 @@ library(tidyverse)
 
 # Read in data
 raw_cdc <- read_csv(file = "./Data/NPAO_Data.csv")
-state_pop <- readxl::read_xlsx("./Data/PopulationReport.xlsx")
 
 
 cdc_cols_drop <- c("YearStart"                  
@@ -64,29 +63,7 @@ cln_tran_cdc <- raw_cdc %>%
 write_csv(cln_tran_cdc, file = "./Data/clean_cdc.csv")
 
 
-# Cleaning State Population data
-cln_state_pop <- state_pop %>% 
-  # Removing rows that aren't states
-  slice(-1, -10, -53, -54, -55) %>% 
-  # Removing columns from previous years population
-  select(-2, -3, -4, -6, -7) %>% 
-  # Renaming remaining columns 
-  rename(State = Name, 
-         Population_2020 = `Pop. 2020`) 
-   
 
-#combined_data <- cln_tran_usda %>% 
-#  left_join(cln_state_pop, 
-#            by = "State") %>%
-#  left_join(cln_tran_cdc,
-#            by = c("State" = "LocationDesc")) %>%  
-#  filter(!is.na(Stratification1)) %>% 
-#  mutate(fmart_100k = count_fmart / (Population_2020 / 100000),
-#         income_strat = relevel(as.factor(Stratification1), ref = "Less than $15,000"))  
-
-# Removing unused data sets 
-remove(raw_cdc, raw_usda, state_pop, cln_state_pop, cln_tran_usda, 
-       cdc_cols_drop, columns_to_encode, usda_drop)
 
 
   

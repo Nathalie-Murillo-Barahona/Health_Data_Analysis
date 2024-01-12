@@ -1,4 +1,4 @@
-Health_Data_Analysis
+Effect of Income Level on Adult Obesity Rates
 ================
 Nathalie
 2023-07-21
@@ -62,12 +62,21 @@ As can be seen in the summary table, on average obesity rates among
 adults tends to increase with income level when obesity rates from
 different states and years are aggregated by income level.
 
-ADD MORE HERE
+This trend can also be observed in the box plot visual below. This
+visual is useful for looking at the distribution of the observations
+from different states and years across income levels
+![](README_files/figure-gfm/income%20obesity%20box%20plot-1.png)<!-- -->
+As can be seen in the box plot as income level rises the distribution of
+obesity rates also rises. However, this effect seems to diminish as
+income increases.
 
 ### Hypothesis
 
-The effect of income on increasing obesity weakens as income level
-rises.
+Null Hypothesis: The effect of income on increasing obesity remains
+constant as income level rises.
+
+Hypothesis: The effect of income on increasing obesity weakens as income
+level rises.
 
 To test this hypothesis we can analyze the marginal changes in odds
 ratio when income level increases by one level.
@@ -99,3 +108,19 @@ show a significant decrease effect of income. This should not be
 interpreted as that increasing income level causes likelihood of obesity
 to decrease. Rather, that the power of income to increase obesity drops
 as income rise.
+
+### Conclutions and Areas for Further Analysis
+
+Based on the logistic regression modeling done and comparison of the
+marginal odds ratio at various income levels we can reject the null
+hypothesis that the effect of income level remains constant on obesity.
+Some possible explanations of this weakening effect could be that as
+adult’s income level increase they have more disposable income to spend
+on healthier food, or personal health and fitness. A limitation of the
+data available is that is all income level beyond 75k per year are
+lumped together. A limitation of this analysis is that the effect of the
+survey year was not modeled and therefore unknown and maybe a
+confounding variable in this analysis. An area where further analysis
+could be done is in normalizing income for the cost of living within
+states and refiting the logistic regression models to see if the effect
+of income level still weakens.

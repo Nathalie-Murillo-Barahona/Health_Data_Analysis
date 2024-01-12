@@ -65,16 +65,6 @@ expand_by_weight <- function(data, weight){
   
 }
 
-original_data <- data.frame(
-  ID = c(1, 2, 3),
-  Value = c("A", "B", "C"),
-  Weight = c(3, 1, 2)
-)
 
-# Use the function to expand the data frame
-expanded_data <- expand_by_weight(original_data, "Weight")
-
-# Print the expanded data frame
-print(expanded_data)
   
  

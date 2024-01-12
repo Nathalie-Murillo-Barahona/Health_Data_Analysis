@@ -18,11 +18,6 @@ summary_stats <- cln_tran_cdc %>%
             avg_obs_rate = round(mean(Data_Value, na.rm = TRUE), 2),
             median_obs_rate = median(Data_Value, na.rm = TRUE))
 
-
-
-
-
-
 # use function to return estimates of marginal effects from moving up an income level on probability of being obese
 marginal_effects <- 
   marginal_ods_calc(y = cln_tran_cdc$Data_Value/100,
@@ -30,6 +25,8 @@ marginal_effects <-
                  weight = cln_tran_cdc$Sample_Size,
                  x_ord = cln_tran_cdc$income_ordinal)
 
+
+### Data visualizations ###
 marginal_effects_plot <- marginal_effects |> 
   ggplot(aes(y =  marginal_or, 
                                x = comp_level)) +
@@ -40,13 +37,16 @@ marginal_effects_plot <- marginal_effects |>
        y = "Marginal Odd Ratio",
        x = "Income Level")
 
-### Data visualizations ###
-cln_tran_cdc %>% 
+## Box plot to show distribution of data points from various years and states across income levels 
+obs_rate_boxplot <- cln_tran_cdc %>% 
   expand_by_weight("Sample_Size") %>% 
   ggplot2::ggplot(aes(y = income_strat, 
                       x = Data_Value,
-
                       color = income_strat)) +
-  geom_boxplot()
+  geom_boxplot() +
+  labs( title =  "Adult Obesity Rates from State and Year Distributed Across Income Level",
+        y = "Income Level",
+        x = "Percent of Adults Who Are Obese",
+        color = "")
 
 cln_tran_cdc %>% ggplot2::ggplot(aes(y = Data_Value))
